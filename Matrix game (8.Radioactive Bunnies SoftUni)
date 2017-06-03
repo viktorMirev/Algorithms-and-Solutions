@@ -1,0 +1,306 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
+
+namespace lab
+{
+    class Program
+    {
+        public static void Main()
+        {
+            var input = Console.ReadLine().Split().Select(int.Parse).ToArray();
+            var field = new char[input[0]][];
+
+            int currX=1;
+            int currY=1;
+
+            for (int i = 0; i < input[0]; i++)
+            {
+                var helper = Console.ReadLine().ToCharArray();
+                    
+                if (helper.Contains('P'))
+                {
+                    currX = i;
+                    for (int j = 0; j < helper.Length; j++)
+                    {
+                        if (helper[j] == 'P')
+                        {
+                            currY = j;
+                            break;
+                        }
+                    }
+                }
+                field[i] = helper;
+            }
+
+            var command = Console.ReadLine();
+
+            bool won = false;
+            int wonX = 1;
+            int wonY = 1;
+            bool died = false;
+            int diedX = 1;
+            int diedY = 1;
+
+            for (int i = 0; i < command.Length; i++)
+            {
+                switch (command[i])
+                {
+                    case 'U':
+                    {
+                        if (currX == 0)
+                        {
+                            wonX = 0;
+                            wonY = currY;
+                            won = true;
+                            field[wonX][wonY] = '.';
+                        }
+                        else
+                        {
+                            if (field[currX - 1][currY] == 'B')
+                            {
+
+                                diedX = currX - 1;
+                                diedY = currY;
+                                died = true;
+                                field[diedX][diedY] = 'B';
+                                field[currX][currY] = '.';
+                            }
+                            else
+                            {
+                                field[currX][currY] = '.';
+                                field[currX - 1][currY] = 'P';
+                                currX--;
+                            }
+                        }
+                        break;
+                    }
+                    case 'D':
+                    {
+                        if (currX == input[0]-1)
+                        {
+                            wonX = currX;
+                            wonY = currY;
+                            won = true;
+                            field[wonX][wonY] = '.';
+                        }
+                        else
+                        {
+                            if (field[currX + 1][currY] == 'B')
+                            {
+                                diedX = currX + 1;
+                                diedY = currY;
+                                died = true;
+                                field[diedX][diedY] = 'B';
+                                field[currX][currY] = '.';
+                            }
+                            else
+                            {
+                                field[currX][currY] = '.';
+                                field[currX + 1][currY] = 'P';
+                                currX++;
+                            }
+                        }
+                            break;
+                    }
+                    case 'L':
+                    {
+                        if (currY == 0)
+                        {
+                            wonX = currX;
+                            wonY = currY;
+                            won = true;
+                            field[wonX][wonY] = '.';
+                        }
+                        else
+                        {
+                            if (field[currX][currY-1] == 'B')
+                            {
+                                diedX = currX;
+                                diedY = currY-1;
+                                died = true;
+                                field[diedX][diedY] = 'B';
+                                field[currX][currY] = '.';
+
+                            }
+                            else
+                            {
+                                field[currX][currY] = '.';
+                                field[currX][currY-1] = 'P';
+                                currY--;
+                            }
+                        }
+                            break;
+                    }
+                    case 'R':
+                    {
+                        if (currY == input[1]-1)
+                        {
+                            wonX = currX;
+                            wonY = currY;
+                            won = true;
+                            field[wonX][wonY] = '.';
+                            
+                        }
+                        else
+                        {
+                            if (field[currX][currY + 1] == 'B')
+                            {
+                                diedX = currX;
+                                diedY = currY + 1;
+                                died = true;
+                                field[diedX][diedY] = 'B';
+                                field[currX][currY] = '.';
+                            }
+                            else
+                            {
+                                field[currX][currY] = '.';
+                                field[currX][currY + 1] = 'P';
+                                currY++;
+                            }
+                        }
+                            break;
+                    }
+                }
+
+                var indexes = new List<int>();
+
+                if (died || won)
+                {
+                    for (int row = 0; row < input[0] ; row++)
+                    {
+                        for (int col = 0; col < input[1]; col++)
+                        {
+                            if (field[row][col] == 'B')
+                            {
+                                if (row > 0)
+                                {
+                                    indexes.Add(row-1);
+                                    indexes.Add(col);
+                                }
+                                if (row < input[0]-1)
+                                {
+                                    indexes.Add(row + 1);
+                                    indexes.Add(col);
+                                }
+                                if (col > 0)
+                                {
+                                    indexes.Add(row);
+                                    indexes.Add(col-1);
+                                }
+                                if (col < input[1] - 1)
+                                {
+                                    indexes.Add(row);
+                                    indexes.Add(col+1);
+                                }
+                            }
+                        }
+                    }
+
+
+                    for (int j = 0; j < indexes.Count; j+=2)
+                    {
+                        if (field[indexes[j]][indexes[j + 1]] == '.')
+                        {
+                            field[indexes[j]][indexes[j + 1]] = 'B';
+                        }
+                    }
+                    //test
+                    
+                }
+                else
+                {
+                    for (int row = 0; row < input[0]; row++)
+                    {
+                        for (int col = 0; col < input[1]; col++)
+                        {
+                            if (field[row][col] == 'B')
+                            {
+                                if (row > 0)
+                                {
+                                    indexes.Add(row - 1);
+                                    indexes.Add(col);
+                                    if (field[row - 1][col] == 'P')
+                                    {
+                                        died = true;
+                                        diedX = row - 1;
+                                        diedY = col;
+                                        
+                                    }
+                                }
+                                if (row < input[0] - 1)
+                                {
+                                    indexes.Add(row + 1);
+                                    indexes.Add(col);
+                                    if (field[row + 1][col] == 'P')
+                                    {
+                                        died = true;
+                                        diedX = row + 1;
+                                        diedY = col;
+                                       
+                                    }
+                                }
+                                if (col > 0)
+                                {
+                                    indexes.Add(row);
+                                    indexes.Add(col - 1);
+                                    if (field[row][col-1] == 'P')
+                                    {
+                                        died = true;
+                                        diedX = row;
+                                        diedY = col - 1;
+                                       
+                                    }
+                                }
+                                if (col < input[1] - 1)
+                                {
+                                    indexes.Add(row);
+                                    indexes.Add(col + 1);
+                                    if (field[row][col + 1] == 'P')
+                                    {
+                                        died = true;
+                                        diedX = row;
+                                        diedY = col + 1;
+                                       
+                                    }
+                                }
+                            }
+                        }
+
+                        
+                    }
+
+                    for (int j = 0; j < indexes.Count; j += 2)
+                    {
+                        if (field[indexes[j]][indexes[j + 1]] != 'B')
+                        {
+                            field[indexes[j]][indexes[j + 1]] = 'B';
+                        }
+                    }
+                    //test
+                   
+                }
+
+                if (died || won)
+                {
+                    foreach (var row in field)
+                    {
+                        Console.WriteLine(string.Join("",row));
+                    }
+                    if (died)
+                    {
+                        Console.WriteLine($"dead: {diedX} {diedY}");
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"won: {wonX} {wonY}");
+                        break;
+                    }
+                }
+              
+            }
+        }
+    }
+}
