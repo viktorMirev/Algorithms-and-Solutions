@@ -1,0 +1,47 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace softUniExercise
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var n = int.Parse(Console.ReadLine());
+
+            List<Predicate<int>> predicates = new List<Predicate<int>>();
+
+            var line = Console.ReadLine().Split().Select(int.Parse);
+            var deviders = new HashSet<int>();
+            foreach (var num in line)
+            {
+                if (!deviders.Contains(num))
+                {
+                    deviders.Add(num);
+                }
+            }
+
+            foreach (var dev in deviders)
+            {
+                predicates.Add(a => a%dev == 0);
+            }
+
+            for (int i = 1; i <= n; i++)
+            {
+                var f = true;
+                foreach (var p in predicates)
+                {
+                    if (!p(i))
+                    {
+                        f = false;
+                        break;
+                    }
+                }
+                if(f) Console.Write(i + " ");
+            }
+            Console.WriteLine();
+        }
+        
+    }
+}
