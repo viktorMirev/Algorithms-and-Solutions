@@ -1,0 +1,75 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace softUniExercise
+{
+    class Program
+    {
+        static void Main()
+        {
+            var specialities = new List<StudentSpeciality>();
+            var students = new List<Student>();
+
+            var input = Console.ReadLine();
+            while (input!="Students:")
+            {
+                var data = input.Split();
+                var name = data[0] + " " + data[1];
+                var fN = data[2];
+                specialities.Add(new StudentSpeciality(name, fN));
+
+                input = Console.ReadLine();
+            }
+            input = Console.ReadLine();
+            while (input != "END")
+            {
+                var data = input.Split();
+                var name = data[1] + " " + data[2];
+                var fN = data[0];
+                students.Add(new Student(name, fN));
+
+                input = Console.ReadLine();
+            }
+
+            var joined = students.Join(
+                specialities,
+                st => st.FacultyNumber,
+                sp => sp.FacultyNumber,
+                (st, sp) => new {Student = st, Spec = sp});
+
+            foreach (var j in joined.OrderBy(a => a.Student.StudentName))
+            {
+                Console.WriteLine(j.Student.StudentName + " " + j.Student.FacultyNumber + " " + j.Spec.SpecialityName);
+            }
+
+
+        }
+
+    }
+
+    class StudentSpeciality
+    {
+       public string SpecialityName { get; set; }
+       public string FacultyNumber { get; set; }
+
+        public StudentSpeciality(string n, string f)
+        {
+            this.SpecialityName = n;
+            this.FacultyNumber = f;
+        }
+
+    }
+
+    class Student
+    {
+        public string StudentName { get; set; }
+        public string FacultyNumber { get; set; }
+        public Student(string n, string f)
+        {
+            this.StudentName = n;
+            this.FacultyNumber = f;
+        }
+
+    }
+}
