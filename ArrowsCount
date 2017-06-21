@@ -1,0 +1,73 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+
+namespace softUniExercise
+{
+    class Program
+    {
+        static void Main()
+        {
+            var sCount = 0l;
+            var mCount = 0l;
+            var lCount = 0l;
+
+            string lines = string.Empty;
+         
+
+            for (int i = 0; i < 4; i++)
+            {
+
+                lines = string.Concat(lines,Console.ReadLine() + "  ");
+            }
+
+            while (true)
+            {
+                var result = lines.IndexOf(">>>----->>");
+                if (result == -1) break;
+                lines = lines.Remove(result,10);
+                lines = lines.Insert(result, "arrow");
+               
+                lCount++;
+            }
+            while (true)
+            {
+                var result = lines.IndexOf(">>----->");
+                if (result == -1) break;
+                lines = lines.Remove(result, 8);
+                lines = lines.Insert(result, "arrow");
+
+                mCount++;
+            }
+            while (true)
+            {
+                var result = lines.IndexOf(">----->");
+                if (result == -1) break;
+                lines = lines.Remove(result, 7);
+                lines = lines.Insert(result, "arrow");
+
+                sCount++;
+            }
+
+
+
+
+
+            var num = lCount + mCount * 10 + sCount*100;
+
+            var binary = Convert.ToString(num, 2);
+            var reversed = new string(binary.Reverse().ToArray());
+            var con = string.Concat(binary,reversed);
+            long resultDecimal = Convert.ToInt64(con, 2);
+            Console.WriteLine(resultDecimal);
+
+
+
+        }
+
+    }
+
+   
+}
